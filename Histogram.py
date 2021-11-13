@@ -1,6 +1,6 @@
 from tkinter import *
 from tkinter.ttk import *
-from ViewUtil import ViewUtil
+
 
 class Histogram(Toplevel):
      
@@ -8,6 +8,6 @@ class Histogram(Toplevel):
          
         super().__init__(master = master)
         self.title("New Window")
-        self.geometry(ViewUtil.pageSizes)
+        self.geometry("300x1000")
         label = Label(self, text ="This is a new Window")
         label.pack()
