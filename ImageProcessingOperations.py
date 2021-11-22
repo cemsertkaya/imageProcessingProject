@@ -4,9 +4,10 @@ from tkinter.ttk import *
 from tkinter import Label, Tk
 from PIL import Image, ImageTk
 from skimage import filters, color, img_as_float, io
+from skimage.filters import gabor
 import tkinter.filedialog as fd
 import numpy as np
-import color
+
 
 
 class ImageProcessingOperations(Toplevel):
@@ -26,17 +27,17 @@ class ImageProcessingOperations(Toplevel):
         self.buttonFrame = Frame(self)
         self.buttonFrame.pack(side=LEFT)
 
-        self.createFilter("Filter1")
-        self.createFilter("Filter2")
-        self.createFilter("Filter3")
-        self.createFilter("Filter4")
-        self.createFilter("Filter5")
+        self.createFilter("Gaussians") #multi-dimensional Gaussian filter.
+        self.createFilter("Inverse") #detecting edges in a coin image
+        self.createFilter("Hessian")
+        self.createFilter("Frangi")
+        self.createFilter("Sato")
 
-        self.createFilter("Filter6")
-        self.createFilter("Filter7")
-        self.createFilter("Filter8")
-        self.createFilter("Filter9")
-        self.createFilter("Filter10")
+        self.createFilter("Meijering")
+        self.createFilter("Unsharp Masking")
+        self.createFilter("Filter8 (Eksik)")
+        self.createFilter("Filter9 (Eksik")
+        self.createFilter("Filter10 (Eksik)")
 
         self.outputImageFrame = Frame(self)
         self.outputImageFrame.pack(side=LEFT)
@@ -56,25 +57,56 @@ class ImageProcessingOperations(Toplevel):
         self.mainloop()
 
     def filterClick(self, text):
-        if text == "Filter1":
+        if text == "Gaussians":
             blurredImage = filters.gaussian(self.selectedImage)
             imageArr = Image.fromarray((blurredImage * 255).astype(np.uint8))
             tkImage = ImageTk.PhotoImage(imageArr)
             outputImage = Label(self.outputImageFrame, image=tkImage)
             outputImage.pack()
             self.mainloop()
-        elif text == "Filter2":
+        elif text == "Inverse":
+            blurredImage = filters.inverse(self.selectedImage)
+            imageArr = Image.fromarray((blurredImage * 255).astype(np.uint8))
+            tkImage = ImageTk.PhotoImage(imageArr)
+            outputImage = Label(self.outputImageFrame, image=tkImage)
+            outputImage.pack()
+            self.mainloop()
+        elif text == "Hessian":
+            blurredImage = filters.hessian(self.selectedImage)
+            imageArr = Image.fromarray((blurredImage * 255).astype(np.uint8))
+            tkImage = ImageTk.PhotoImage(imageArr)
+            outputImage = Label(self.outputImageFrame, image=tkImage)
+            outputImage.pack()
+            self.mainloop()
+        elif text == "Frangi":
+            blurredImage = filters.frangi(self.selectedImage)
+            imageArr = Image.fromarray((blurredImage * 255).astype(np.uint8))
+            tkImage = ImageTk.PhotoImage(imageArr)
+            outputImage = Label(self.outputImageFrame, image=tkImage)
+            outputImage.pack()
+            self.mainloop()
+        elif text == "Sato":
+            blurredImage = filters.sato(self.selectedImage)
+            imageArr = Image.fromarray((blurredImage * 255).astype(np.uint8))
+            tkImage = ImageTk.PhotoImage(imageArr)
+            outputImage = Label(self.outputImageFrame, image=tkImage)
+            outputImage.pack()
+            self.mainloop()
+        elif text == "Meijering":
+            blurredImage = filters.meijering(self.selectedImage)
+            imageArr = Image.fromarray((blurredImage * 255).astype(np.uint8))
+            tkImage = ImageTk.PhotoImage(imageArr)
+            outputImage = Label(self.outputImageFrame, image=tkImage)
+            outputImage.pack()
+            self.mainloop()
             pass
-        elif text == "Filter3":
-            pass
-        elif text == "Filter4":
-            pass
-        elif text == "Filter5":
-            pass
-        elif text == "Filter6":
-            pass
-        elif text == "Filter7":
-            pass
+        elif text == "Unsharp Masking":
+            blurredImage = filters.unsharp_mask(self.selectedImage)
+            imageArr = Image.fromarray((blurredImage * 255).astype(np.uint8))
+            tkImage = ImageTk.PhotoImage(imageArr)
+            outputImage = Label(self.outputImageFrame, image=tkImage)
+            outputImage.pack()
+            self.mainloop()
         elif text == "Filter8":
             pass
         elif text == "Filter9":
