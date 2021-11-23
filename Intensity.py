@@ -50,8 +50,8 @@ class Intensity(Toplevel):
         self.mainloop()
 
     def filterClick(self, text):
-        img = img_as_float(self.selectedImage)
-        outputImage = Label(self.outputImageFrame, image= skimage.exposure.rescale_intensity(img))
+        img = skimage.exposure.rescale_intensity(self.selectedImage * 1.0)
+        outputImage = Label(self.outputImageFrame, image= np.dstack((img)))
         outputImage.pack()
         self.mainloop()
 

@@ -2,12 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="03b7ce00-d7e1-48b1-844c-94eb8acf9501" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/imageProcessingProject.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/imageProcessingProject.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Histogram.py" beforeDir="false" afterPath="$PROJECT_DIR$/Histogram.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ImageProcessingOperations.py" beforeDir="false" afterPath="$PROJECT_DIR$/ImageProcessingOperations.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Intensity.py" beforeDir="false" afterPath="$PROJECT_DIR$/Intensity.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Morphology.py" beforeDir="false" afterPath="$PROJECT_DIR$/Morphology.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SpaceTransformation.py" beforeDir="false" afterPath="$PROJECT_DIR$/SpaceTransformation.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
