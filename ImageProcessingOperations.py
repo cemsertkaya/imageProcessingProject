@@ -1,13 +1,11 @@
 # tkinter and ttk module
 from tkinter import *
 from tkinter.ttk import *
-from tkinter import Label, Tk
+from tkinter import Label
 from PIL import Image, ImageTk
-from skimage import filters, color, img_as_float, io
-from skimage.filters import gabor
+from skimage import filters, color, io
 import tkinter.filedialog as fd
 import numpy as np
-
 
 
 class ImageProcessingOperations(Toplevel):
@@ -15,8 +13,10 @@ class ImageProcessingOperations(Toplevel):
     def __init__(self, master=None):
         super().__init__(master=master)
         self.selectedImage = None
+        self.outputImage = None
+        self.grayScaledImage = None
         self.title("Image Processing Operations")
-        self.geometry("1000x1000")
+        self.geometry("1280x720")
 
         self.inputImageFrame = Frame(self)
         self.inputImageFrame.pack(side=LEFT)
@@ -27,17 +27,17 @@ class ImageProcessingOperations(Toplevel):
         self.buttonFrame = Frame(self)
         self.buttonFrame.pack(side=LEFT)
 
-        self.createFilter("Gaussians") #multi-dimensional Gaussian filter.
-        self.createFilter("Inverse") #detecting edges in a coin image
+        self.createFilter("Gaussians")  # multi-dimensional Gaussian filter.
+        self.createFilter("Laplace")  # detecting edges in a coin image
         self.createFilter("Hessian")
-        self.createFilter("Frangi")
+        self.createFilter("Median")
         self.createFilter("Sato")
 
         self.createFilter("Meijering")
         self.createFilter("Unsharp Masking")
-        self.createFilter("Filter8 (Eksik)")
-        self.createFilter("Filter9 (Eksik")
-        self.createFilter("Filter10 (Eksik)")
+        self.createFilter("Rank Order")
+        self.createFilter("Gabor")
+        self.createFilter("Farid")
 
         self.outputImageFrame = Frame(self)
         self.outputImageFrame.pack(side=LEFT)
@@ -51,65 +51,68 @@ class ImageProcessingOperations(Toplevel):
     def buttonClick(self):
         path = fd.askopenfilename(parent=self, filetypes=[("Image File", '.jpg'), ("Image File", '.png')])
         self.selectedImage = io.imread(path)
-        tkImage = ImageTk.PhotoImage(Image.fromarray(self.selectedImage))
+        self.grayScaledImage = color.rgb2gray(self.selectedImage)
+        tkImage = ImageTk.PhotoImage(Image.fromarray(self.selectedImage).resize(size=(400, 400)))
         myvar = Label(self.inputImageFrame, image=tkImage)
         myvar.pack()
         self.mainloop()
 
+    def printOutput(self, tkImage):
+        if self.outputImage is not None:
+            self.outputImage.destroy()
+        self.outputImage = Label(self.outputImageFrame, image=tkImage)
+        self.outputImage.pack()
+        self.mainloop()
+
     def filterClick(self, text):
-        if text == "Gaussians":
-            blurredImage = filters.gaussian(self.selectedImage)
-            imageArr = Image.fromarray((blurredImage * 255).astype(np.uint8))
-            tkImage = ImageTk.PhotoImage(imageArr)
-            outputImage = Label(self.outputImageFrame, image=tkImage)
-            outputImage.pack()
-            self.mainloop()
-        elif text == "Inverse":
-            blurredImage = filters.inverse(self.selectedImage)
-            imageArr = Image.fromarray((blurredImage * 255).astype(np.uint8))
-            tkImage = ImageTk.PhotoImage(imageArr)
-            outputImage = Label(self.outputImageFrame, image=tkImage)
-            outputImage.pack()
-            self.mainloop()
-        elif text == "Hessian":
-            blurredImage = filters.hessian(self.selectedImage)
-            imageArr = Image.fromarray((blurredImage * 255).astype(np.uint8))
-            tkImage = ImageTk.PhotoImage(imageArr)
-            outputImage = Label(self.outputImageFrame, image=tkImage)
-            outputImage.pack()
-            self.mainloop()
-        elif text == "Frangi":
-            blurredImage = filters.frangi(self.selectedImage)
-            imageArr = Image.fromarray((blurredImage * 255).astype(np.uint8))
-            tkImage = ImageTk.PhotoImage(imageArr)
-            outputImage = Label(self.outputImageFrame, image=tkImage)
-            outputImage.pack()
-            self.mainloop()
-        elif text == "Sato":
-            blurredImage = filters.sato(self.selectedImage)
-            imageArr = Image.fromarray((blurredImage * 255).astype(np.uint8))
-            tkImage = ImageTk.PhotoImage(imageArr)
-            outputImage = Label(self.outputImageFrame, image=tkImage)
-            outputImage.pack()
-            self.mainloop()
-        elif text == "Meijering":
-            blurredImage = filters.meijering(self.selectedImage)
-            imageArr = Image.fromarray((blurredImage * 255).astype(np.uint8))
-            tkImage = ImageTk.PhotoImage(imageArr)
-            outputImage = Label(self.outputImageFrame, image=tkImage)
-            outputImage.pack()
-            self.mainloop()
-            pass
-        elif text == "Unsharp Masking":
-            blurredImage = filters.unsharp_mask(self.selectedImage)
-            imageArr = Image.fromarray((blurredImage * 255).astype(np.uint8))
-            tkImage = ImageTk.PhotoImage(imageArr)
-            outputImage = Label(self.outputImageFrame, image=tkImage)
-            outputImage.pack()
-            self.mainloop()
-        elif text == "Filter8":
-            pass
-        elif text == "Filter9":
-            pass
-        elif text == "Filter10":
-            pass
+        if self.selectedImage is not None:
+            if text == "Gaussians":
+                filteredImage = filters.gaussian(self.grayScaledImage, multichannel=False)
+                imageArr = Image.fromarray((filteredImage * 255).astype(np.uint8)).resize(size=(400, 400))
+                tkImage = ImageTk.PhotoImage(imageArr)
+                self.printOutput(tkImage)
+            elif text == "Laplace":
+                filteredImage = filters.laplace(self.grayScaledImage)
+                imageArr = Image.fromarray((filteredImage * 255).astype(np.uint8)).resize(size=(400, 400))
+                tkImage = ImageTk.PhotoImage(imageArr)
+                self.printOutput(tkImage)
+            elif text == "Hessian":
+                filteredImage = filters.hessian(self.grayScaledImage, mode='constant')
+                imageArr = Image.fromarray((filteredImage * 255).astype(np.uint8)).resize(size=(400, 400))
+                tkImage = ImageTk.PhotoImage(imageArr)
+                self.printOutput(tkImage)
+            elif text == "Median":
+                filteredImage = filters.median(self.grayScaledImage)
+                imageArr = Image.fromarray((filteredImage * 255).astype(np.uint8)).resize(size=(400, 400))
+                tkImage = ImageTk.PhotoImage(imageArr)
+                self.printOutput(tkImage)
+            elif text == "Sato":
+                filteredImage = filters.sato(self.grayScaledImage, mode='constant')
+                imageArr = Image.fromarray((filteredImage * 255).astype(np.uint8)).resize(size=(400, 400))
+                tkImage = ImageTk.PhotoImage(imageArr)
+                self.printOutput(tkImage)
+            elif text == "Meijering":
+                filteredImage = filters.meijering(self.grayScaledImage)
+                imageArr = Image.fromarray((filteredImage * 255).astype(np.uint8)).resize(size=(400, 400))
+                tkImage = ImageTk.PhotoImage(imageArr)
+                self.printOutput(tkImage)
+            elif text == "Unsharp Masking":
+                filteredImage = filters.unsharp_mask(self.grayScaledImage)
+                imageArr = Image.fromarray((filteredImage * 255).astype(np.uint8)).resize(size=(400, 400))
+                tkImage = ImageTk.PhotoImage(imageArr)
+                self.printOutput(tkImage)
+            elif text == "Rank Order":
+                filteredImage = filters.rank_order(self.grayScaledImage)
+                imageArr = Image.fromarray((filteredImage[0] * 255).astype(np.uint8)).resize(size=(400, 400))
+                tkImage = ImageTk.PhotoImage(imageArr)
+                self.printOutput(tkImage)
+            elif text == "Gabor":
+                filteredImage = filters.gabor(self.grayScaledImage, frequency=2.0)
+                imageArr = Image.fromarray((filteredImage[0] * 255).astype(np.uint8)).resize(size=(400, 400))
+                tkImage = ImageTk.PhotoImage(imageArr)
+                self.printOutput(tkImage)
+            elif text == "Farid":
+                filteredImage = filters.farid(self.grayScaledImage)
+                imageArr = Image.fromarray((filteredImage * 255).astype(np.uint8)).resize(size=(400, 400))
+                tkImage = ImageTk.PhotoImage(imageArr)
+                self.printOutput(tkImage)

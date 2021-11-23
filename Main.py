@@ -14,7 +14,7 @@ master = Tk()
 
 # sets the geometry of
 # main root window
-master.geometry("1000x1000")
+master.geometry("1280x720")
 
 label = Label(master, text="Görüntü İşleme Projemize Hoşgeldiniz")
 label.pack(side=TOP, pady=10)
