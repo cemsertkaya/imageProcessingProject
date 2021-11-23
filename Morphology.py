@@ -33,7 +33,8 @@ class Morphology(Toplevel):
         self.createFilter("Dilation")
         self.createFilter("Closing")
         self.createFilter("Opening")
-
+        self.createFilter("Reconstruction")
+        self.createFilter("Area Opening")
 
         self.outputImageFrame = Frame(self)
         self.outputImageFrame.pack(side=LEFT)
@@ -80,6 +81,22 @@ class Morphology(Toplevel):
         elif text == "Opening":
             kernel = np.ones((5, 5), np.uint8)
             result = skimage.morphology.opening(self.selectedImage)
+            imageArr = Image.fromarray((result * 255).astype(np.uint8))
+            tkImage = ImageTk.PhotoImage(imageArr)
+            outputImage = Label(self.outputImageFrame, image=tkImage)
+            outputImage.pack()
+            self.mainloop()
+        elif text == "Reconstruction":
+            kernel = np.ones((5, 5), np.uint8)
+            result = skimage.morphology.reconstruction(self.selectedImage)
+            imageArr = Image.fromarray((result * 255).astype(np.uint8))
+            tkImage = ImageTk.PhotoImage(imageArr)
+            outputImage = Label(self.outputImageFrame, image=tkImage)
+            outputImage.pack()
+            self.mainloop()
+        elif text == "Area Opening":
+            kernel = np.ones((5, 5), np.uint8)
+            result = skimage.morphology.area_opening(self.selectedImage) #trashhold can be added.
             imageArr = Image.fromarray((result * 255).astype(np.uint8))
             tkImage = ImageTk.PhotoImage(imageArr)
             outputImage = Label(self.outputImageFrame, image=tkImage)
