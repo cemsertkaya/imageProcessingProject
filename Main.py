@@ -8,6 +8,7 @@ from ImageProcessingOperations import ImageProcessingOperations
 from Intensity import Intensity
 from Morphology import Morphology
 from SpaceTransformation import SpaceTransformation
+from VideoProcessing import VideoProcessing
 
 # creates a Tk() object
 master = Tk()
@@ -42,7 +43,7 @@ btn5.bind("<Button>", lambda e: Morphology(master))
 btn5.pack(pady=30)
 
 btn6 = Button(master, text="Video İşleme")
-btn6.bind("<Button>", lambda e: Histogram(master))
+btn6.bind("<Button>", lambda e: VideoProcessing(master))
 btn6.pack(pady=30)
 
 # mainloop, runs infinitely
