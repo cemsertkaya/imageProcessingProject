@@ -3,6 +3,7 @@ from tkinter.ttk import *
 from tkinter import Label
 from PIL import Image, ImageTk
 from skimage import io, morphology, color
+from skimage.morphology import square
 import tkinter.filedialog as fd
 import numpy as np
 
@@ -14,6 +15,9 @@ class Morphology(Toplevel):
         self.selectedImage = None
         self.outputImage = None
         self.grayScaledImage = None
+        self.saveButton = None
+        self.imageArr = None
+        self.inputImage = None
         self.title("Image Processing Operations")
         self.geometry("1280x720")
 
@@ -21,7 +25,7 @@ class Morphology(Toplevel):
         self.inputImageFrame.pack(side=LEFT)
 
         openImage = Button(self.inputImageFrame, text="Select Image", command=self.buttonClick)
-        openImage.pack(padx=200, pady=100)
+        openImage.pack(padx=250, pady=100)
 
         self.buttonFrame = Frame(self)
         self.buttonFrame.pack(side=LEFT)
@@ -31,15 +35,15 @@ class Morphology(Toplevel):
         self.createFilter("Dilation")
         self.createFilter("Closing")
         self.createFilter("Opening")
-        self.createFilter("Reconstruction")
+        self.createFilter("White Tophat")
         self.createFilter("Area Opening")
         self.createFilter("Area Closing")
         self.createFilter("Thin")
+        self.createFilter("Skeletonize")
+        self.createFilter("Max Tree")
 
         self.outputImageFrame = Frame(self)
         self.outputImageFrame.pack(side=LEFT)
-        invisText = Label(self.outputImageFrame, text=" ")
-        invisText.pack(pady=100, padx=200)
 
     def createFilter(self, text):
         filter = Button(self.buttonFrame, text=text, command=lambda: self.morphClick(text))
@@ -50,56 +54,80 @@ class Morphology(Toplevel):
         self.selectedImage = io.imread(path)
         self.grayScaledImage = color.rgb2gray(self.selectedImage)
         tkImage = ImageTk.PhotoImage(Image.fromarray(self.selectedImage).resize(size=(400, 400)))
-        myvar = Label(self.inputImageFrame, image=tkImage)
-        myvar.pack()
+
+        if self.inputImage is not None:
+            self.inputImage.destroy()
+        self.inputImage = Label(self.inputImageFrame, image=tkImage)
+        self.inputImage.pack()
         self.mainloop()
 
     def printOutput(self, tkImage):
+        if self.saveButton is None:
+            self.saveButton = Button(self.outputImageFrame, text="Kaydet", command=self.save)
+            self.saveButton.pack(pady=100, padx=200)
+
         if self.outputImage is not None:
             self.outputImage.destroy()
         self.outputImage = Label(self.outputImageFrame, image=tkImage)
-        self.outputImage.pack()
+        self.outputImage.pack(padx=100)
         self.mainloop()
+
+    def save(self):
+        if self.imageArr is not None:
+            filename = fd.asksaveasfile(parent=self, mode='w', defaultextension=".jpg")
+            if not filename:
+                return
+            self.imageArr.save(filename)
 
     def morphClick(self, text):
         if self.selectedImage is not None:
             if text == "Erosion":
                 result = morphology.erosion(self.grayScaledImage)
-                imageArr = Image.fromarray((result * 255).astype(np.uint8)).resize(size=(400, 400))
-                tkImage = ImageTk.PhotoImage(imageArr)
+                self.imageArr = Image.fromarray((result * 255).astype(np.uint8))
+                tkImage = ImageTk.PhotoImage(self.imageArr.resize(size=(400, 400)))
                 self.printOutput(tkImage)
             elif text == "Dilation":
                 result = morphology.dilation(self.grayScaledImage)
-                imageArr = Image.fromarray((result * 255).astype(np.uint8)).resize(size=(400, 400))
-                tkImage = ImageTk.PhotoImage(imageArr)
+                self.imageArr = Image.fromarray((result * 255).astype(np.uint8))
+                tkImage = ImageTk.PhotoImage(self.imageArr.resize(size=(400, 400)))
                 self.printOutput(tkImage)
             elif text == "Closing":
                 result = morphology.closing(self.grayScaledImage)
-                imageArr = Image.fromarray((result * 255).astype(np.uint8)).resize(size=(400, 400))
-                tkImage = ImageTk.PhotoImage(imageArr)
+                self.imageArr = Image.fromarray((result * 255).astype(np.uint8))
+                tkImage = ImageTk.PhotoImage(self.imageArr.resize(size=(400, 400)))
                 self.printOutput(tkImage)
             elif text == "Opening":
                 result = morphology.opening(self.grayScaledImage)
-                imageArr = Image.fromarray((result * 255).astype(np.uint8)).resize(size=(400, 400))
-                tkImage = ImageTk.PhotoImage(imageArr)
+                self.imageArr = Image.fromarray((result * 255).astype(np.uint8))
+                tkImage = ImageTk.PhotoImage(self.imageArr.resize(size=(400, 400)))
                 self.printOutput(tkImage)
-            elif text == "Reconstruction":
-                result = morphology.reconstruction(self.grayScaledImage)
-                imageArr = Image.fromarray((result * 255).astype(np.uint8)).resize(size=(400, 400))
-                tkImage = ImageTk.PhotoImage(imageArr)
+            elif text == "White Tophat":
+                result = morphology.white_tophat(self.grayScaledImage, square(5))
+                self.imageArr = Image.fromarray((result * 255).astype(np.uint8))
+                tkImage = ImageTk.PhotoImage(self.imageArr.resize(size=(400, 400)))
                 self.printOutput(tkImage)
             elif text == "Area Opening":
-                result = morphology.area_opening(self.grayScaledImage)  # trashhold can be added.
-                imageArr = Image.fromarray((result * 255).astype(np.uint8)).resize(size=(400, 400))
-                tkImage = ImageTk.PhotoImage(imageArr)
+                result = morphology.area_opening(self.grayScaledImage)
+                self.imageArr = Image.fromarray((result * 255).astype(np.uint8))
+                tkImage = ImageTk.PhotoImage(self.imageArr.resize(size=(400, 400)))
                 self.printOutput(tkImage)
             elif text == "Area Closing":
-                result = morphology.area_closing(self.grayScaledImage)  # trashhold can be added.
-                imageArr = Image.fromarray((result * 255).astype(np.uint8)).resize(size=(400, 400))
-                tkImage = ImageTk.PhotoImage(imageArr)
+                result = morphology.area_closing(self.grayScaledImage)
+                self.imageArr = Image.fromarray((result * 255).astype(np.uint8))
+                tkImage = ImageTk.PhotoImage(self.imageArr.resize(size=(400, 400)))
                 self.printOutput(tkImage)
             elif text == "Thin":
-                result = morphology.thin(self.grayScaledImage)  # trashhold can be added.
-                imageArr = Image.fromarray(result).resize(size=(400, 400))
-                tkImage = ImageTk.PhotoImage(imageArr)
+                result = morphology.thin(self.grayScaledImage)
+                self.imageArr = Image.fromarray(result)
+                tkImage = ImageTk.PhotoImage(self.imageArr.resize(size=(400, 400)))
+                self.printOutput(tkImage)
+            elif text == "Skeletonize":
+                result = morphology.skeletonize(self.grayScaledImage, method='lee')
+                self.imageArr = Image.fromarray(result)
+                tkImage = ImageTk.PhotoImage(self.imageArr.resize(size=(400, 400)))
+                self.printOutput(tkImage)
+            elif text == "Max Tree":
+                result = morphology.max_tree(self.grayScaledImage)
+                self.imageArr = Image.fromarray((result[0] * 255).astype(np.uint8))
+                tkImage = ImageTk.PhotoImage(self.imageArr.resize(size=(400, 400)))
                 self.printOutput(tkImage)
